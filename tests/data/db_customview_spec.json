@@ -1,0 +1,109 @@
+{
+	"comment": "Only specify fields which are not clear or have special attributes. By default, all not-primary key-fields will be published.",
+	"suppliers": {
+		"_attributes": ["write_table_admin"]
+	},
+	"projects": {
+		"_attributes": ["write_table_admin"]
+	},
+	"users": {
+		"_attributes": ["write_table_admin"],
+		"username": {"_attributes": ["unique"]},
+		"credential_hash": {"_attributes": ["password"]},
+		"_predefined_filters": {
+			"active-users": {
+				"sql_condition": "users.state='active'",
+				"default": true
+			},
+			"inactive-users": {
+				"sql_condition": "users.state='inactive'"
+			},
+			"all-users": {}
+		},
+		"_column_filters": null
+	},
+	"orderings": {
+		"idsupplier": {"ref_text": ["suppliers.name"]},
+		"idproject": {"ref_text": ["projects.name"]},
+		"idemployee_ordered": {"ref_text": ["users.username"]},
+		"_predefined_filters": {
+			"projects-running": {
+				"base_table": "orderings", "base_column": "idproject",
+				"join_table": "projects", "join_column": "idproject",
+				"and_condition": "projects.project_state='running'",
+				"default": true
+			},
+			"projects-finished": {
+				"base_table": "orderings", "base_column": "idproject",
+				"join_table": "projects", "join_column": "idproject",
+				"and_condition": "projects.project_state='finished'"
+			},
+			"orderings-last-3-years": {
+				"base_table": "orderings", "base_column": "idproject",
+				"join_table": "projects", "join_column": "idproject",
+				"and_condition": {
+					"sqlite": "orderings.date_ordered >= DATE('now', '-3 year')",
+					"mysql": "orderings.date_ordered >= DATE_SUB(CURRENT_DATE, INTERVAL 3 YEAR)"
+				}
+			},
+			"projects-all": {}
+		},
+		"_attributes": ["write_everyone"]
+	},
+	"documents": {
+		"idemployee_added": {"ref_text": ["users.username"]},
+		"idordering": {
+			"ref_text": ["orderings.order_nameid"],
+			"DELETEME_filter": "orderings.order_state!='invoiced'"
+		},
+		"filename": {
+			"filelink":  "{ARCHIVE_URL_PATH}", "connected_file": true,
+			"file_path": "{ARCHIVE_DIR}",
+			"_attributes": ["editor_readonly"],
+			"rename_rule": "{idordering.orderings.idproject.projects.name}/{type}_{filedate}.{<file-ext>}"
+		},
+		"name": {"_attributes": ["editor_readonly"]},
+		"state": {"_attributes": ["editor_readonly", "hidden"]},
+		"filedate": {"_attributes": ["editor_readonly"]},
+		"_attributes": ["write_everyone"]
+	},
+	"config": {
+		"_attributes": ["hidden", "write_table_admin"]
+	},
+	"upload-filelist": {
+		"_attributes": ["write_everyone"],
+		"_editor_filters": {
+			"documents.idordering" : {
+				"projects-running": {
+					"base_table": "orderings", "base_column": "idproject",
+					"join_table": "projects", "join_column": "idproject",
+					"and_condition": "projects.project_state='running'",
+					"default": true
+				},
+				"projects-finished": {
+					"base_table": "orderings", "base_column": "idproject",
+					"join_table": "projects", "join_column": "idproject",
+					"and_condition": "projects.project_state='finished'"
+				},
+				"projects-all": {
+					"base_table": "orderings", "base_column": "idproject",
+					"join_table": "projects", "join_column": "idproject"
+				},
+				"orderings-last-3-years": {
+					"base_table": "orderings", "base_column": "idproject",
+					"join_table": "projects", "join_column": "idproject",
+					"and_condition": {
+						"sqlite": "orderings.date_ordered >= DATE('now', '-3 year')",
+						"mysql": "orderings.date_ordered >= DATE_SUB(CURRENT_DATE, INTERVAL 3 YEAR)"
+					}
+				}
+			}
+		}
+	},
+	"upload": {
+		"_attributes": ["write_everyone"]
+	},
+	"config-api": {
+		"_attributes": ["write_table_admin"]
+	}
+}

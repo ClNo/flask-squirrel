@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Claudio Nold">
+  <title>Order Management</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/dropzone@5.7.2/dist/min/dropzone.min.css">
+
+  <!-- CSS: Datatables Viewer -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+  <!-- CSS: Datatables Editor - download a trial! https://editor.datatables.net/download/download?type=js -->
+  <link rel="stylesheet" type="text/css" href="DatatablesEditor/datatables.min.css">
+
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <!-- <link href="navbar-top.css" rel="stylesheet"> -->
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <!-- <a class="navbar-brand" href="#">Home</a> -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto" id="navbar-items">
+        <!-- navbar items will be added dynamically -->
+      </ul>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="language-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Language
+        </button>
+        <div class="dropdown-menu" aria-labelledby="language-dropdown">
+          <a class="dropdown-item btn-lang" langCode="en" href="#">English</a>
+          <a class="dropdown-item btn-lang" langCode="de" href="#">Deutsch</a>
+        </div>
+      </div>
+      <button type="button" id="login-nav-button" class="btn btn-primary" data-toggle="modal" >Login</button>  <!-- Replaced by JS: data-target="#modalLoginDiv" -->
+    </div>
+  </nav>
+
+  <main role="main" class="remove-margin" id="main_page">
+    <div id="main-container"/>
+  </main>
+
+  <!-- modal dialog for login; dynamically popped up -->
+  <div class="modal fade" id="modalLoginDiv" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modalLabel">Login</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- <form action="/ordermanagement-api/login-token" id="login-form-test"> -->
+          <form action="" id="login-form">
+            <fieldset class="form-group">
+              <label for="login-username">Login Name</label>
+              <input type="text" class="form-control" id="login-username" name="username">
+            </fieldset>
+            <fieldset class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" class="form-control" id="login-password" name="password">
+            </fieldset>
+            <button type="submit" class="btn btn-primary" id="login-submit">Submit</button>
+          </form>
+        </div>
+        <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <!-- modal dialog for deleting an uploaded file; dynamically popped up -->
+  <div class="modal fade" id="modalConfirmAction" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-confirm-title">Confirm Action</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" id="modal-confirm-body">
+          <p>Do you really...</p>
+        </div>
+        <div class="modal-footer">
+          <button id="modal-confirm-cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="modal-confirm-ok" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/dropzone@5.7.2/dist/min/dropzone.min.js"></script>
+
+  <!-- JS: Datatables Viewer -->
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+  <!-- JS: Datatables Editor - download a trial! https://editor.datatables.net/download/download?type=js -->
+  <script type="text/javascript" src="DatatablesEditor/datatables.min.js"></script>
+
+  <script type="text/javascript" src="js/language.js"></script>
+  <script type="text/javascript" src="js/auth.js"></script>
+  <script type="text/javascript" src="js/table_utils.js"></script>
+  <script type="text/javascript" src="js/standalone_editor.js"></script>
+  <script type="text/javascript" src="js/standard_table.js"></script>
+  <script type="text/javascript" src="js/uploader.js"></script>
+  <script type="text/javascript" src="js/config.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+  <script>
+      // Note: bug in DropZone for jQuery >= 3!
+      // https://github.com/enyo/dropzone/issues/1423
+
+      Dropzone.options.docupload = {
+          paramName: "file",  // The name that will be used to transfer the file,
+          maxFilesize: 250,   // MB
+              success: function(file, response)
+              {
+                  console.log('File upload completed (direct): ' + file.name);
+                  console.log(response);
+                  fileUploadFinished(file.name, true, response);
+              },
+              error: function(file, response)
+              {
+                  console.error('File upload error (direct): ' + file.name);
+                  console.log(response);
+                  fileUploadFinished(file.name, false, response);
+                  return false;
+              }
+        };
+  </script>
+</body>
+</html>

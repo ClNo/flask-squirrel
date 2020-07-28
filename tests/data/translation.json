@@ -1,0 +1,123 @@
+{
+	"suppliers": {
+		"suppliers": {"en": "Supplier", "de": "Lieferant"},
+		"idsupplier":  {"en": "ID", "de": "ID"},
+		"name": {"en": "Name", "de": "Name"},
+		"_editor": {
+			"table_multi": {"en": "Suppliers", "de": "Lieferanten"},
+			"table_single": {"en":  "supplier", "de": "Lieferant"},
+			"article": {"en":  "a", "de": "einen"}
+		}
+	},
+	"projects": {
+		"projects": {"en": "Projects", "de": "Projekte"},
+		"idproject":  {"en": "ID", "de": "ID"},
+		"name": {"en": "Name", "de": "Name"},
+		"comment": {"en": "Comment", "de": "Kommentar"},
+		"project_state": {"en": "Project state", "de": "Projektstatus"},
+		"project_state.running": {"en": "running", "de": "laufend"},
+		"project_state.finished": {"en": "finished", "de": "beendet"},
+		"date_started": {"en": "Date started", "de": "Datum gestartet"},
+		"date_finished": {"en": "Date finished", "de": "Datum beendet"},
+		"_editor": {
+			"table_multi": {"en": "Projects", "de": "Projekte"},
+			"table_single": {"en":  "project", "de": "Projekt"},
+			"article": {"en":  "a", "de": "ein"}
+		}
+	},
+	"users": {
+		"users": {"en": "Employee", "de": "Mitarbeiter"},
+		"iduser":  {"en": "ID", "de": "ID"},
+		"name": {"en": "Name", "de": "Name"},
+		"username": {"en": "Abbreviation", "de": "Abkürzung"},
+		"firstname": {"en": "First name", "de": "Vorname"},
+		"lastname": {"en": "Last name", "de": "Nachname"},
+		"credential_hash": {"en": "Password", "de": "Passwort"},
+		"authentication_level": {"en": "Access level", "de": "Zugriffsrecht"},
+		"state": {"en": "State", "de": "Status"},
+		"state.active": {"en": "active", "de": "aktiv"},
+		"state.inactive": {"en": "inactive", "de": "inaktiv"},
+
+		"_predefined_filters.active-users": {"en": "active employees", "de": "aktive Mitarbeiter"},
+		"_predefined_filters.inactive-users": {"en": "inactive employees", "de": "inaktive Mitarbeiter"},
+		"_predefined_filters.all-users": {"en": "all employees", "de": "alle Mitarbeiter"},
+
+		"_editor": {
+			"table_multi": {"en": "Employees", "de": "Mitarbeiter"},
+			"table_single": {"en":  "employee", "de": "Mitarbeiter"},
+			"article": {"en":  "a", "de": "einen"}
+		}
+	},
+	"orderings": {
+		"orderings": {"en": "Orderings", "de": "Bestellungen"},
+		"idordering":  {"en": "ID", "de": "ID"},
+		"idproject":  {"en": "Project", "de": "Projekt"},
+		"idsupplier": {"en": "Supplier", "de": "Lieferant"},
+		"order_nameid":  {"en": "Order number", "de": "Bestellnummer"},
+		"material":  {"en": "Material", "de": "Material"},
+		"order_state":  {"en": "Order state", "de": "Bestellstatus"},
+		"order_state.ordered":  {"en": "ordered", "de": "bestellt"},
+		"order_state.confirmed":  {"en": "confirmed", "de": "bestätigt"},
+		"order_state.delivered":  {"en": "delivered", "de": "geliefert"},
+		"order_state.invoiced":  {"en": "invoiced", "de": "verrechnet"},
+		"idemployee_ordered":  {"en": "Who ordered", "de": "Wer bestellt"},
+		"date_ordered":  {"en": "Date ordered", "de": "Bestelldatum"},
+		"date_invoice_planned":  {"en": "Date invoice planned", "de": "Gepl. Rechnungsdatum"},
+		"date_planned":  {"en": "Date planned", "de": "Gepl. Lieferdatum"},
+		"date_delivered":  {"en": "Date delivered", "de": "Lieferdatum"},
+		"date_invoiced_done":  {"en": "Date invoiced", "de": "Datum verrechnet"},
+		"invoice":  {"en": "Invoice amount", "de": "Rechnungsbetrag"},
+		"comment": {"en": "Comment", "de": "Kommentar"},
+		
+		"documents.order": {"en": "OR:", "de": "BE:"},
+		"documents.orderconfirmation": {"en": "OC:", "de": "AB:"},
+		"documents.delivery": {"en": "DE:", "de": "LS:"},
+		"documents.invoice": {"en": "IN:", "de": "RE:"},
+		"documents.undefined": {"en": "UN:", "de": "AN:"},
+
+		"_predefined_filters.projects-running": {"en": "running projects", "de": "laufende Projekte"},
+		"_predefined_filters.projects-finished": {"en": "finished projects only", "de": "nur abgeschlossene Projekte"},
+		"_predefined_filters.projects-all": {"en": "all projects", "de": "alle Projekte"},
+		"_predefined_filters.orderings-last-3-years": {"en": "last 3 years", "de": "letzte 3 Jahre"},
+
+		"_editor": {
+			"table_multi": {"en": "Orderings", "de": "Bestellungen"},
+			"table_single": {"en":  "ordering", "de": "Bestellung"},
+			"article": {"en":  "a", "de": "eine"}
+		}
+	},
+	"documents": {
+		"documents": {"en": "Documents", "de": "Dokumente"},
+		"iddocument":  {"en": "ID", "de": "ID"},
+		"name": {"en": "Name", "de": "Name"},
+		"filename": {"en": "File name", "de": "Dateiname"},
+		"comment": {"en": "Comment", "de": "Kommentar"},
+		"filedate": {"en": "File date", "de": "Dateidatum"},
+		"idemployee_added":  {"en": "Who added", "de": "Wer angefügt"},
+		"idordering":  {"en": "For ordering", "de": "Für Bestellung"},
+		"state":  {"en": "State", "de": "Status"},
+		"state.unassigned":  {"en": "unassigned", "de": "nicht zugewiesen"},
+		"state.assigned":  {"en": "assigned", "de": "zugewiesen"},
+		"state.inactive":  {"en": "inactive", "de": "inaktiv"},
+		"state.deleted":  {"en": "deleted", "de": "gelöscht"},
+		"type":  {"en": "Type", "de": "Typ"},
+		"type.undefined":  {"en": "other type", "de": "anderer Typ"},
+		"type.order":  {"en": "Order", "de": "Bestellung"},
+		"type.orderconfirmation":  {"en": "Order confirmation", "de": "Auftragsbestätigung"},
+		"type.delivery":  {"en": "Delivery", "de": "Lieferung"},
+		"type.invoice":  {"en": "Invoice", "de": "Rechnung"},
+
+		"_editor": {
+			"table_multi": {"en": "Documents", "de": "Dokumente"},
+			"table_single": {"en":  "document", "de": "Dokument"},
+			"article": {"en":  "a", "de": "ein"}
+		}
+	},
+	"config-api": {
+		"_editor": {
+			"table_multi": {"en": "Configuration", "de": "Konfiguration"},
+			"table_single": {"en":  "entry", "de": "Eintrag"},
+			"article": {"en":  "a", "de": "einen"}
+		}
+	}
+}

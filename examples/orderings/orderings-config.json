@@ -1,0 +1,23 @@
+{
+  "listening_ip": "0.0.0.0",
+  "listening_port": 5000,
+  "api_path": "orderings-api",
+  "version": "00.01.00",
+  "flask-debug": false,
+  "db_uri": "sqlite:////tmp/squirrel_orderings.sqlite",
+  "db_creation_commands": "../../tests/data/test-db-model_sqlite.sql",
+  "db_type": "sqlite",
+  "db_spec": "../../tests/data/db_spec.json",
+  "customview_spec": "../../tests/data/db_customview_spec.json",
+  "translation_spec": "../../tests/data/translation.json",
+  "create_not_existing_dirs": true,
+  "upload_dir": "/tmp/squirrel_upload",
+  "file_url_path": "/squirrel-upload-files",
+  "archive_dir": "/tmp/squirrel_archive",
+  "archive_url_path": "/squirrel-archive-dir",
+  "session_dir": "/tmp/squirrel_sessions",
+  "default_admin_user": {"username": "admin", "password": "adm123", "authentication_level": 10, "firstname": "John", "lastname": "Test"},
+  "SECRET_KEY": "_5#y2LF4Q8z-\\xec]/",
+  "SESSION_COOKIE_SAMESITE": "Lax",
+  "SESSION_COOKIE_SECURE": true
+}

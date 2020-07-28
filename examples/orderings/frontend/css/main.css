@@ -1,0 +1,62 @@
+div.vspace1em {
+	clear: both;
+	height: 1em;
+}
+
+.boxbg {
+	margin: 10px;
+	padding: 50px;
+	border: 2px solid white;
+	border-radius: 5px;
+	/* text-align: center; */
+	background: #c9c9c9;
+}
+
+.remove-margin {
+	margin: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.config-top-spacer {
+    margin-top: 10px;
+}
+
+td.edit-btn-cell {
+	width: 1%;
+	white-space: nowrap;
+	table-layout: fixed;
+}
+
+textarea {
+	color: black;
+}
+
+input {
+	color: black;
+}
+
+h1 {
+	font-size: 1.5rem;
+	font-weight: 1000;
+	margin-top: 1.5rem;
+}
+
+th {
+	font-size: .7rem;
+}
+
+td {
+	font-size: .7rem;
+}
+
+body {
+	background-color: #C5C5D0;
+}
+
+.navbar .btn{
+    margin-right: 10px;
+}
+.navbar .btn:last-child{
+    margin-right: 0;
+}

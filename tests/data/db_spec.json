@@ -1,0 +1,317 @@
+{
+	"suppliers": {
+		"columns": [
+			{
+				"name": "idsupplier",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true,
+				"auto-increment": true
+			},
+			{
+				"name": "name",
+				"type": "string",
+				"func": "value",
+				"type-details": "200",
+				"not-null": true
+			}
+		]
+	},
+	"projects": {
+		"columns": [
+			{
+				"name": "idproject",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true,
+				"auto-increment": true
+			},
+			{
+				"name": "name",
+				"type": "string",
+				"func": "value",
+				"type-details": "200",
+				"not-null": true
+			},
+			{
+				"name": "comment",
+				"type": "string",
+				"func": "value",
+				"type-details": "200"
+			},
+			{
+				"name": "project_state",
+				"type": "enum",
+				"func": "value",
+				"type-details": [
+					"running",
+					"finished"
+				],
+				"not-null": true
+			},
+			{
+				"name": "date_started",
+				"type": "date",
+				"func": "value",
+				"not-null": true
+			},
+			{
+				"name": "date_finished",
+				"type": "date",
+				"func": "value"
+			}
+		]
+	},
+	"users": {
+		"columns": [
+			{
+				"name": "iduser",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true,
+				"auto-increment": true
+			},
+			{
+				"name": "username",
+				"type": "string",
+				"func": "value",
+				"type-details": "50",
+				"not-null": true
+			},
+			{
+				"name": "firstname",
+				"type": "string",
+				"func": "value",
+				"type-details": "100",
+				"not-null": true
+			},
+			{
+				"name": "lastname",
+				"type": "string",
+				"func": "value",
+				"type-details": "100",
+				"not-null": true
+			},
+			{
+				"name": "credential_hash",
+				"type": "string",
+				"func": "value",
+				"type-details": "200",
+				"not-null": false
+			},
+			{
+				"name": "authentication_level",
+				"type": "int",
+				"func": "value",
+				"not-null": true
+			},
+			{
+				"name": "state",
+				"type": "enum",
+				"func": "value",
+				"type-details": [
+					"active",
+					"inactive"
+				],
+				"not-null": true
+			}
+		]
+	},
+	"orderings": {
+		"columns": [
+			{
+				"name": "idordering",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true,
+				"auto-increment": true
+			},
+			{
+				"name": "order_nameid",
+				"type": "string",
+				"func": "value",
+				"type-details": "100",
+				"not-null": true
+			},
+			{
+				"name": "idsupplier",
+				"type": "uint",
+				"func": "foreignkey",
+				"not-null": true,
+				"reference": "suppliers.idsupplier"
+			},
+			{
+				"name": "material",
+				"type": "string",
+				"func": "value",
+				"type-details": "100"
+			},
+			{
+				"name": "idproject",
+				"type": "uint",
+				"func": "foreignkey",
+				"not-null": true,
+				"reference": "projects.idproject"
+			},
+			{
+				"name": "idemployee_ordered",
+				"type": "uint",
+				"func": "foreignkey",
+				"not-null": true,
+				"reference": "users.iduser"
+			},
+			{
+				"name": "order_state",
+				"type": "enum",
+				"func": "value",
+				"type-details": [
+					"ordered",
+					"confirmed",
+					"delivered",
+					"invoiced"
+				],
+				"not-null": true
+			},
+			{
+				"name": "date_ordered",
+				"type": "date",
+				"func": "value"
+			},
+			{
+				"name": "date_invoice_planned",
+				"type": "date",
+				"func": "value",
+				"not-null": true
+			},
+			{
+				"name": "date_planned",
+				"type": "date",
+				"func": "value"
+			},
+			{
+				"name": "date_delivered",
+				"type": "date",
+				"func": "value"
+			},
+			{
+				"name": "date_invoiced_done",
+				"type": "date",
+				"func": "value"
+			},
+			{
+				"name": "invoice",
+				"type": "decimal",
+				"func": "value",
+				"type-details": [
+					"8",
+					"2"
+				],
+				"not-null": true
+			},
+			{
+				"name": "comment",
+				"type": "string",
+				"func": "value",
+				"type-details": "200"
+			}
+		]
+	},
+	"documents": {
+		"columns": [
+			{
+				"name": "iddocument",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true,
+				"auto-increment": true
+			},
+			{
+				"name": "name",
+				"type": "string",
+				"func": "value",
+				"type-details": "100",
+				"not-null": true
+			},
+			{
+				"name": "filename",
+				"type": "string",
+				"func": "value",
+				"type-details": "1000",
+				"not-null": true
+			},
+			{
+				"name": "type",
+				"type": "enum",
+				"func": "value",
+				"type-details": [
+					"undefined",
+					"order",
+					"orderconfirmation",
+					"delivery",
+					"invoice"
+				],
+				"not-null": true
+			},
+			{
+				"name": "filedate",
+				"type": "date",
+				"func": "value",
+				"not-null": true
+			},
+			{
+				"name": "idemployee_added",
+				"type": "uint",
+				"func": "foreignkey",
+				"not-null": true,
+				"reference": "users.iduser"
+			},
+			{
+				"name": "idordering",
+				"type": "uint",
+				"func": "foreignkey",
+				"not-null": true,
+				"reference": "orderings.idordering"
+			},
+			{
+				"name": "comment",
+				"type": "string",
+				"func": "value",
+				"type-details": "200"
+			},
+			{
+				"name": "state",
+				"type": "enum",
+				"func": "value",
+				"type-details": [
+					"unassigned",
+					"assigned",
+					"inactive",
+					"deleted"
+				]
+			}
+		]
+	},
+	"config": {
+		"columns": [
+			{
+				"name": "idconfig",
+				"type": "uint",
+				"func": "primarykey",
+				"not-null": true
+			},
+			{
+				"name": "key",
+				"type": "string",
+				"func": "value",
+				"type-details": "100",
+				"not-null": true
+			},
+			{
+				"name": "value",
+				"type": "string",
+				"func": "value",
+				"type-details": "500"
+			}
+		]
+	}
+}

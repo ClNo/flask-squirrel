@@ -1,0 +1,20 @@
+{
+  "listening_ip": "0.0.0.0",
+  "listening_port": 5000,
+  "api_path": "squirrel",
+  "version": "99.99.99",
+  "flask-debug": false,
+  "db_uri": "sqlite:///",
+  "db_test_creation": "tests/data/test-db-model_sqlite.sql",
+  "db_type": "sqlite",
+  "db_spec": "tests/data/db_spec.json",
+  "customview_spec": "tests/data/db_customview_spec.json",
+  "translation_spec": "tests/data/translation.json",
+  "create_not_existing_dirs": false,
+  "upload_dir": "/tmp/squirrel_upload",
+  "file_url_path": "/squirrel-upload-files",
+  "archive_dir": "/tmp/squirrel_archive",
+  "archive_url_path": "/squirrel-archive-dir",
+  "session_dir": "/tmp/squirrel_sessions",
+  "default_admin_user": {"username": "admin", "password": "adm123", "authentication_level": 10, "firstname": "John", "lastname": "Test"}
+}

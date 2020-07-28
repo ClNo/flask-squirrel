@@ -1,0 +1,20 @@
+# Base:  savoirfairelinux / docker-eslint-airbnb
+# https://github.com/savoirfairelinux/docker-eslint-airbnb/blob/master/Dockerfile
+
+FROM node:14-alpine
+
+RUN mkdir /eslint
+WORKDIR /eslint
+
+# RUN npm info "eslint@7.4.0" peerDependencies --json | command sed 's/[\{\},]//g ; s/: /@/g' | xargs npm install -g "eslint@7.4.0"
+# RUN npm info "eslint-config-airbnb@18.2.0" peerDependencies --json | command sed 's/[\{\},]//g ; s/: /@/g' | xargs npm install -g "eslint-config-airbnb@18.2.0"
+# RUN npm info "eslint-plugin-jsdoc@29.2.0" peerDependencies --json | command sed 's/[\{\},]//g ; s/: /@/g' | xargs npm install -g "eslint-plugin-jsdoc@29.2.0"
+
+# note: this installs eslint 7.0.0
+# RUN npx install-peerdeps --dev eslint-plugin-jsdoc@^29.2.0
+
+# note: this installs eslint 7.2.0 :(
+RUN npx install-peerdeps --dev eslint-config-airbnb@^18.2.0
+
+ENV PATH=/eslint/node_modules/.bin:$PATH
+ENTRYPOINT ["eslint"]

@@ -1,0 +1,47 @@
+{
+  "extends": "airbnb",
+
+  "env": {
+    "browser": true,
+    "node": true,
+    "jquery": true,
+    "es6": true
+  },
+
+  "globals": {
+    "tripDrawer": true,
+    "screenDrawer": true,
+    "layoutController": true,
+    "layoutControllerCompact": true,
+    "incidentDrawer": true,
+    "kisStates": true,
+    "kisUtils": true,
+    "kisStyles": true,
+    "kisStylesCompact": true,
+    "tripDrawerCompact": true,
+    "connLayout": true,
+    "InitInterval": true,
+    "clock": true,
+    "pearlDrawer": true,
+    "infotainmentTrainDataUpdate": true,
+    "pearlDrawerCompact": true,
+    "connectionDrawer": true,
+    "pearlDrawerCommon": true,
+    "SVG": true,
+    "iksStylesWebBuilder": true,
+    "iksControlPanel": true,
+    "iksStyles": true,
+    "iksPrepareData": true
+
+
+  },
+
+  "rules": {
+    "no-console": "off",
+    "max-len": ["error", 120],
+    "func-names": ["warn", "as-needed"],
+    "brace-style": ["error", "stroustrup"],
+    "no-param-reassign": ["error", { "props": false }],
+  }
+
+}
