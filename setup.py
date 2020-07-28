@@ -11,6 +11,7 @@ requirements = [
     'Flask-HTTPAuth>=3.3.0',
     'Flask-RESTful>=0.3.7',
     'Flask-SQLAlchemy>=2.4.0',
+    'passlib'
 ]
 
 version_file = path.join(
