@@ -182,3 +182,5 @@ If you have the DataTables Editor you are able to create, edit and delete the ta
    
 .. image:: demo-screenshot_2.png
    :target: Demo Editor
+
+*Note: Even the Orderings demo is a bit raw it can be used to publish any kind of SQL tables! The JS scripts get mostly everything from the Flask-Squirrel backend and therefore you can do already much with this demo code!*
