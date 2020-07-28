@@ -12,6 +12,9 @@ Major benefits:
 - Basic document/file upload support
 - No HTML is generated - REST API only (JSON)
 - Server-side filtering
+- The "Orderings" demo provides a web frontend application which is quite generic.
+
+*Note: this project is in testing stage. Any contributions are welcome!*
 
 
 First Steps to Run the Demo
@@ -20,10 +23,9 @@ First Steps to Run the Demo
 There is a small document management example to show how you can use Flask-Squirrel. The goal is to upload a document on a server
 and assign it to an ordering of material a small company uses for its projects.
 
-The following steps are made for Linux; for Windows or Mac you should adapt some paths in the configuration file.
-
 *Note: This demo needs at least Python 3.7 because of the function datetime.datetime.fromisoformat() for the initial DB creation. Flask-Squirrel itself also works with Python 3.6.*
 
+The following steps are made for Linux; for Windows or Mac you should adapt some paths in the configuration file. Do the project setup:
 
 .. code-block:: bash
 
@@ -39,6 +41,7 @@ The following steps are made for Linux; for Windows or Mac you should adapt some
    pip install --upgrade pip
    python setup.py develop
 
+To run the Python backend on port 5000 (automatically loads the configuration from ``orderings-config.json``):
 
 .. code-block:: bash
 
@@ -46,7 +49,7 @@ The following steps are made for Linux; for Windows or Mac you should adapt some
    python3 backend.py
 
 
-You should get the following output of the SQL backend:
+You should get the following output of the backend:
    
 .. code-block::
 
@@ -75,7 +78,7 @@ Now you can test the REST API with a tool like curl:
 
 .. code-block:: bash
 
-   $ curl 'http://127.0.0.1:5000/orderings-api/users?get=data_spec&version=1&lang=en'
+   curl 'http://127.0.0.1:5000/orderings-api/users?get=data_spec&version=1&lang=en'
 
 The result contains the data but as well editor specification (argument "get=data_spec"):
 
@@ -165,17 +168,19 @@ The result contains the data but as well editor specification (argument "get=dat
        "translation": {}
    }
 
-You can also access the JavaScript web application in a browser with the URL ``http://127.0.0.1:5000/orderings/index.html``.
-Flask acts as file server which provides the html/css/js files and images.
+You can also access the backend with a JavaScript web application in a browser with the URL ``http://127.0.0.1:5000/orderings/index.html``. Flask acts as file server which provides the html/css/js files and images.
 
 .. image:: demo-screenshot_1.png
    :target: Demo Viewer
 
-*Note: Flask-Squirrel is made to work with the very good browser component DataTables. You can download a trial version of the  `DataTables Editor <https://editor.datatables.net/download/download?type=js>`_ and copy it into examples/orderings/frontend/DatatablesEditor/datatables.min.js and datatables.min.css .*
+*Note: Flask-Squirrel is made to work with the very good browser component DataTables.*
+You can download a trial version of the  `DataTables Editor <https://editor.datatables.net/download/download?type=js>`_ and copy it into examples/orderings/frontend/DatatablesEditor/datatables.min.js and datatables.min.css .
    
 If you have the DataTables Editor you are able to create, edit and delete the table rows from the web application:
    
 .. image:: demo-screenshot_2.png
    :target: Demo Editor
 
+To make any changes in the protected tables you can login as **admin / adm123** which is also specified in configuration file ``orderings-config.json``.
+   
 *Note: Even the Orderings demo is a bit raw it can be used to publish any kind of SQL tables! The JS scripts get mostly everything from the Flask-Squirrel backend and therefore you can do already much with this demo code!*
