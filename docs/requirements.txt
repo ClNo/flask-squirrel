@@ -1,0 +1,4 @@
+Sphinx
+sphinxcontrib-blockdiag
+sphinxcontrib-seqdiag
+sphinx-rtd-theme
