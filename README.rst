@@ -6,29 +6,27 @@ It is based on Flask, Flask-RESTful and Flask-SQLAlchemy.
 
 Major benefits:
 
-- The database data is formatted as a JSON which can be used by the great jQuery library datatables.
+- The database data is formatted as a JSON which can be used by the great jQuery library `DataTables <https://datatables.net/>`_.
 - Multilanguage
 - Allows custom business logic
-- Basic document upload support
-- No HTML is generated - REST API only
+- Basic document/file upload support
+- No HTML is generated - REST API only (JSON)
+- Server-side filtering
 
 
 First Steps to Run the Demo
 ---------------------------
 
 There is a small document management example to show how you can use Flask-Squirrel. The goal is to upload a document on a server
-and assign it to an internal ordering of material a small company uses for its projects.
+and assign it to an ordering of material a small company uses for its projects.
 
-The following steps run in Linux; for Windows or Mac you should adapt some paths in the configuration.
+The following steps are made for Linux; for Windows or Mac you should adapt some paths in the configuration file.
 
-.. note::
-
-   The demo needs at least Python 3.7 because of the function datetime.datetime.fromisoformat() for the initial DB creation.
-   Flask-Squirrel itself also works with Python 3.6.
+*Note: This demo needs at least Python 3.7 because of the function datetime.datetime.fromisoformat() for the initial DB creation. Flask-Squirrel itself also works with Python 3.6.*
 
 
 .. code-block:: shell
-   :description: Project Setup
+   :caption: Project Setup
 
    python3 --version
    # should be at least 3.7 for running the demo
@@ -44,7 +42,7 @@ The following steps run in Linux; for Windows or Mac you should adapt some paths
 
 
 .. code-block:: shell
-   :description: Run the Demo
+   :caption: Run the Demo
 
    cd examples/orderings
    python3 backend.py
@@ -53,7 +51,7 @@ The following steps run in Linux; for Windows or Mac you should adapt some paths
 You should get the following output of the SQL backend:
    
 .. code-block::
-   :description: Backend Output
+   :caption: Backend Output
 
    INFO in flask_app: Overriding config item SECRET_KEY: dev -> _5#y2LF4Q8z-\xec]/
    INFO in flask_app: Overriding config item SESSION_COOKIE_SAMESITE: None -> Lax
@@ -79,14 +77,14 @@ You should get the following output of the SQL backend:
 Now you can test the REST API with a tool like curl:
 
 .. code-block:: shell
-   :description: API Test 1
+   :caption: API Test 1
 
    $ curl 'http://127.0.0.1:5000/orderings-api/users?get=data_spec&version=1&lang=en'
 
-The result contains the data but as well the table and table editor specification (argument "get=data_spec"):
+The result contains the data but as well editor specification (argument "get=data_spec"):
 
 .. code-block:: json
-   :description: API Output
+   :caption: API Output
 
    {
        "data": [
@@ -172,12 +170,15 @@ The result contains the data but as well the table and table editor specificatio
        "translation": {}
    }
 
-You can also access the interface in a browser with the URL http://127.0.0.1:5000/orderings/index.html
+You can also access the JavaScript web application in a browser with the URL ``http://127.0.0.1:5000/orderings/index.html``.
+Flask acts as file server which provides the html/css/js files and images.
 
 .. image:: demo-screenshot_1.png
    :target: Demo Viewer
 
-If you have the DataTables Editor (download a trial) you are able to edit the table rows:
+*Note: Flask-Squirrel is made to work with the very good browser component DataTables. You can download a trial version of the  `DataTables Editor <https://editor.datatables.net/download/download?type=js>`_ and copy it into examples/orderings/frontend/DatatablesEditor/datatables.min.js and datatables.min.css .*
+   
+If you have the DataTables Editor you are able to create, edit and delete the table rows from the web application:
    
 .. image:: demo-screenshot_2.png
    :target: Demo Editor
