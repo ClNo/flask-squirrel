@@ -16,6 +16,8 @@ Major benefits:
 
 *Note: this project is in testing stage. Any contributions are welcome!*
 
+Also see the `Read the Docs documentation <https://flask-squirrel.readthedocs.io>`_ which is under construction.
+
 
 First Steps to Run the Demo
 ---------------------------
