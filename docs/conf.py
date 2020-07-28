@@ -81,3 +81,5 @@ seqdiag_html_image_format = "SVG"
 # -- todo
 todo_include_todos = True
 
+# -- for Read the Docs autobuild process
+master_doc = 'index'
