@@ -25,8 +25,7 @@ The following steps are made for Linux; for Windows or Mac you should adapt some
 *Note: This demo needs at least Python 3.7 because of the function datetime.datetime.fromisoformat() for the initial DB creation. Flask-Squirrel itself also works with Python 3.6.*
 
 
-.. code-block:: shell
-   :caption: Project Setup
+.. code-block:: bash
 
    python3 --version
    # should be at least 3.7 for running the demo
@@ -41,8 +40,7 @@ The following steps are made for Linux; for Windows or Mac you should adapt some
    python setup.py develop
 
 
-.. code-block:: shell
-   :caption: Run the Demo
+.. code-block:: bash
 
    cd examples/orderings
    python3 backend.py
@@ -51,7 +49,6 @@ The following steps are made for Linux; for Windows or Mac you should adapt some
 You should get the following output of the SQL backend:
    
 .. code-block::
-   :caption: Backend Output
 
    INFO in flask_app: Overriding config item SECRET_KEY: dev -> _5#y2LF4Q8z-\xec]/
    INFO in flask_app: Overriding config item SESSION_COOKIE_SAMESITE: None -> Lax
@@ -76,15 +73,13 @@ You should get the following output of the SQL backend:
 
 Now you can test the REST API with a tool like curl:
 
-.. code-block:: shell
-   :caption: API Test 1
+.. code-block:: bash
 
    $ curl 'http://127.0.0.1:5000/orderings-api/users?get=data_spec&version=1&lang=en'
 
 The result contains the data but as well editor specification (argument "get=data_spec"):
 
 .. code-block:: json
-   :caption: API Output
 
    {
        "data": [
