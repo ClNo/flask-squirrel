@@ -28,14 +28,15 @@ with open(version_file, 'r') as fp:
     version = m.groups(1)[0]
 
 setup(
-   name='Flask-Squirrel',
+   name='flask-squirrel',
    version=version,
    license='MIT',
    description='Database REST API provider based on Flask/Flask-RESTful',
+   url='https://github.com/ClNo/flask-squirrel',
    keywords='flask SQL REST datatables JSON',
    author='Claudio Nold',
    author_email='claudio.nold@gmx.net',
-   packages=find_packages(exclude=['tests']),
+   packages=find_packages(exclude=['docs', 'tests']),
    classifiers=[
        'Development Status :: 3 - Alpha',
        'Environment :: Web Environment',
