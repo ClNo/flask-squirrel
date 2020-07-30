@@ -1,6 +1,8 @@
 Flask-Squirrel
 ==============
 
+|PyPI version| |Python versions| |ci| |Documentation status|
+
 The squirrel collects your nuts and stores them into your SQL database so it is a REST API which accesses your database.
 It is based on Flask, Flask-RESTful and Flask-SQLAlchemy.
 

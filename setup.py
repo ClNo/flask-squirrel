@@ -32,8 +32,9 @@ setup(
    version=version,
    license='MIT',
    description='Database REST API provider based on Flask/Flask-RESTful',
+   keywords='flask SQL REST datatables JSON',
    author='Claudio Nold',
-   author_email='claudio.nold@foo.com',
+   author_email='claudio.nold@gmx.net',
    packages=find_packages(exclude=['tests']),
    classifiers=[
        'Development Status :: 3 - Alpha',
@@ -41,6 +42,7 @@ setup(
        'Intended Audience :: Developers',
        'Framework :: Flask',
        'Programming Language :: Python :: 3',
+       'Programming Language :: Python :: 3.6',
        'Programming Language :: Python :: 3.7',
        'Programming Language :: Python :: 3.8',
        'License :: OSI Approved :: MIT License',
@@ -48,7 +50,7 @@ setup(
        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
        'Topic :: Software Development :: Libraries :: Python Modules'
    ],
-   python_requires='>=3.7',
+   python_requires='>=3.6',
    zip_safe=False,
    include_package_data=True,
    platforms='any',
