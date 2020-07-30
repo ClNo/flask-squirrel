@@ -54,7 +54,7 @@ setup(
    platforms='any',
    test_suite='pytest',
    install_requires=requirements,
-   tests_require=['Flask-Squirrel'],
+   tests_require=['pytest-flask'],
    # Install these with "pip install -e '.[docs]'
    extras_require={
        'docs': 'sphinx',
