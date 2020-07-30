@@ -1,6 +1,5 @@
 from tests.api_tools import ApiClient
 from tests.client_app_config import client_config
-from flask import current_app
 
 import os
 
@@ -51,13 +50,13 @@ class UploadFile(ApiClient):
         assert rv.status_code == 200, 'deleting uploaded file {0} failed: {1}'.format(del_filename, rv.json)
 
         # check if it has been removed
-        upload_dir = current_app.config['upload_dir']
+        upload_dir = client_config.upload_dir
         upload_filename = os.path.join(upload_dir, del_filename)
         assert os.path.isfile(upload_filename) is False, 'uploaded file {0} should be removed in {1} now, but still exists'.format(del_filename, upload_dir)
 
     @staticmethod
     def _check_file_uploaded(src_filename, filename):
-        upload_dir = current_app.config['upload_dir']
+        upload_dir = client_config.upload_dir
         upload_filename = os.path.join(upload_dir, filename)
 
         upload_size = os.stat(upload_filename).st_size
