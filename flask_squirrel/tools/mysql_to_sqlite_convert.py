@@ -22,6 +22,9 @@ def mysql_to_sqlite(sql_input_filename, sqlite_output_filename):
         if cmp_line.startswith('USE ') and cmp_line.endswith(';'):
             schema = line.strip()[3:-1].strip()
             continue
+        if cmp_line.startswith('AUTO_INCREMENT') and ('=' in cmp_line):
+            # standalone 'AUTO_INCREMENT' with next counter value is not supported here
+            continue
 
         out_line: str = line
 

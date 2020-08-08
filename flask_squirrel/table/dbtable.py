@@ -354,9 +354,9 @@ class DbTable(Resource):
                 filterstr += '{0}=\'{1}\''.format(column_name, column_filters[column_name])
 
         if filterstr:
-            sql_str = 'SELECT {0} FROM {1} {2}'.format(self.sql_query_columns_full[table_name], table_name, filterstr)
+            sql_str = 'SELECT {0} FROM `{1}` {2}'.format(self.sql_query_columns_full[table_name], table_name, filterstr)
         else:
-            sql_str = 'SELECT {0} FROM {1}'.format(self.sql_query_columns_full[table_name], table_name)
+            sql_str = 'SELECT {0} FROM `{1}`'.format(self.sql_query_columns_full[table_name], table_name)
         query = conn.execute(sql_str)
         query_rows = query.cursor.fetchall()
         col_name_list = self.sql_query_columns[table_name].split(',')
@@ -455,7 +455,7 @@ class DbTable(Resource):
             return
 
         conn = self.db_connect.connect()  # connect to database
-        query = conn.execute('SELECT {0} FROM {1} WHERE {2}'.format(self.sql_query_columns[table_name], table_name, sqlfilter))
+        query = conn.execute('SELECT {0} FROM `{1}` WHERE {2}'.format(self.sql_query_columns[table_name], table_name, sqlfilter))
         query_result = query.cursor.fetchall()
 
         if len(query_result) != 1:
@@ -790,7 +790,7 @@ class DbTable(Resource):
             conn = self.db_connect.connect()
 
             # first check if the column value already exists
-            sql_cmd_unique_query = 'SELECT * FROM {0} WHERE {0}.{1}="{2}"'.format(self.table_name,
+            sql_cmd_unique_query = 'SELECT * FROM `{0}` WHERE {0}.{1}="{2}"'.format(self.table_name,
                                                                                   unique_query_col,
                                                                                   unique_query_val)
             result = conn.execute(text(sql_cmd_unique_query))
