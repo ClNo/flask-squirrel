@@ -45,6 +45,13 @@ def generate_customview(db_spec, customview_file):
                                            '_predefined_filters': {}}
         else:
             customview_dict[table_name] = {'_attributes': [], '_predefined_filters': {}}
+        
+        table_spec = db_spec[table_name]['columns']
+        for col_spec in table_spec:
+            if col_spec['func'] == 'foreignkey':
+                ref_table = col_spec['reference'].split('.')[0]
+                ref_name = 'name'  # TODO: this is pure speculation! Try to find something better!
+                customview_dict[table_name][col_spec['name']] = {'ref_text': ['{0}.{1}'.format(ref_table, ref_name)]}
 
     customview_file.write(pprint.pformat(customview_dict, width=120, compact=True))
 

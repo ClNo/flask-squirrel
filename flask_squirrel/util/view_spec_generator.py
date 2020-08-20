@@ -1,4 +1,4 @@
-from flask_squirrel.table.dbutil import get_label_for_lang
+from flask_squirrel.table.dbutil import get_label_for_lang, SELF_REF_SUFFIX
 
 from typing import Dict, Union, Tuple
 
@@ -74,14 +74,16 @@ class ViewSpecGenerator:
         # This is a specification of how to present the database content in a table.
         view_spec['table-fields'] = []
 
+        ref_table_count = {}
+
         for col_spec in table_spec:
-            read_spec, edit_spec = self._generate_column(table_name, col_spec)
+            read_spec, edit_spec = self._generate_column(table_name, col_spec, ref_table_count)
             if read_spec:
                 view_spec['table-fields'].append(read_spec)
             if edit_spec:
                 view_spec['editor-fields'].append(edit_spec)
 
-    def _generate_column(self, table_name: str, col_spec: Dict[str, Union[None, str, bool, list, int]])\
+    def _generate_column(self, table_name: str, col_spec: Dict[str, Union[None, str, bool, list, int]], ref_table_count)\
             -> Tuple[Dict[str, Union[str, bool]], Dict[str, Union[str, bool]]]:
         col_name = col_spec['name']
         col_type = col_spec['type']
@@ -101,8 +103,27 @@ class ViewSpecGenerator:
         name = '{0}.{1}'.format(table_name, col_name)
         if col_func == 'foreignkey':
             try:
+                ref_table_name, ref_col_name = col_spec['reference'].split('.')
+                if ref_table_name == table_name:
+                    # This is a reference to itself! Example: reference from one employee to an other who is the chief of him.
+                    # In this case a suffix must be added to the table name to refence it correctly!
+                    ref_table_name = '{0}{1}'.format(ref_table_name, SELF_REF_SUFFIX)
+
+                if ref_table_name not in ref_table_count:
+                    ref_table_count[ref_table_name] = 0
+
                 ref_text_list = self.customview_spec[table_name][col_name]['ref_text']
-                name = ' '.join(ref_text_list)
+                new_ref_text_list = []
+                for ref in ref_text_list:
+                    cref_table_name, cref_col_name = ref.split('.')
+                    # it's expected that cref_table_name is always the same as ref_table_name; otherwise it the parameters
+                    # would be strange... -> use ref_table_name here as it is fixed for self referencing columns
+                    new_ref = '{0}.{1}.{2}'.format(ref_table_name, ref_table_count[ref_table_name], cref_col_name)
+                    new_ref_text_list.append(new_ref)
+                name = ' '.join(new_ref_text_list)
+
+                ref_table_count[ref_table_name] += 1
+
             except Exception as e:
                 log.error('No custom view specification found for foreign key {0} in table {1}'.format(col_name,
                                                                                                        table_name))

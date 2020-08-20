@@ -49,8 +49,8 @@ class JoinedFilterSpec(FilterSpec):
     def generate_sql(self, filter_variables):
         # filter_variables: unused yet
         fs = self.filter_spec
-        sql = 'INNER JOIN {0} ON {1}.{2}={0}.{3} '.format(fs['join_table'], fs['base_table'],
-                                                          fs['base_column'], fs['join_column'])
+        sql = 'INNER JOIN `{0}` ON `{1}`.`{2}`=`{0}`.`{3}` '.format(fs['join_table'], fs['base_table'],
+                                                                    fs['base_column'], fs['join_column'])
         if 'and_condition' in fs:
             if type(fs['and_condition']) == str:
                 sql += 'WHERE {0} '.format(fs['and_condition'])

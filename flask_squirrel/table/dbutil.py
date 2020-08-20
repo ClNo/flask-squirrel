@@ -1,3 +1,4 @@
+SELF_REF_SUFFIX = '_selfref'  # his constant is used in different modules
 
 def get_label_for_lang(lang, label_dict):
     if lang in label_dict:

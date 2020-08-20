@@ -122,8 +122,16 @@ class OrderingsData(ApiClient):
         for entry in query_result['data']:
             for table_name in expected_tables:
                 assert table_name in entry, 'Table \'{0}\' not in orderings query: {1}'.format(table_name, entry)
-                self.extended_check_db_content(self.db_spec, self.customview_spec, table_name, entry[table_name],
-                                               expected_tables[table_name])
+                if table_name == self.resource_name:
+                    # the row of the main table is just a dict
+                    self.extended_check_db_content(self.db_spec, self.customview_spec, table_name, entry[table_name],
+                                                   expected_tables[table_name])
+
+                else:
+                    # entry[table_name] is a list of multiple ref_table entries of the same type
+                    for joined_entry in entry[table_name]:
+                        self.extended_check_db_content(self.db_spec, self.customview_spec, table_name, joined_entry,
+                                                       expected_tables[table_name])
 
         # --- 2. check the options field (used for editing) ---
         assert 'options' in query_result, 'The orderings GET query did not contain a \'options\' entry'
@@ -271,28 +279,35 @@ class OrderingsData(ApiClient):
                 assert field['type'] == 'datetime', 'Field \'type\' should be a \'datetime\': {0}'.format(field)
 
     def _table_fields_check(self, table_fields, current_lang):
-        # 'table-fields': [{'data': 'orderings.order_nameid',
-        # 'title': 'Order number'}, {'data': 'suppliers.name', 'title': 'Supplier'}, {'data': 'orderings.material',
-        # 'title': 'Material'}, {'data': 'projects.name', 'title': 'Project'}, {'data': 'users.username',
-        # 'title': 'Who ordered'}, {'data': 'orderings_order_state.name', 'title': 'Order state'},
-        # {'data': 'orderings.date_ordered', 'title': 'Date ordered', 'type': 'date'}, {'data':
-        # 'orderings.date_invoice_planned', 'title': 'Date invoice planned', 'type': 'date'},
-        # {'data': 'orderings.date_planned', 'title': 'Date planned', 'type': 'date'}, {'data':
-        # 'orderings.date_delivered', 'title': 'Date delivered', 'type': 'date'}, {'data':
-        # 'orderings.date_invoiced_done', 'title': 'Date invoiced', 'type': 'date'}, {'data': 'orderings.invoice',
-        # 'title': 'Invoice amount', 'type': 'num-fmt'}, {'data': 'orderings.comment', 'title': 'Comment'}]}
+        # 'table-fields': [{'data': 'orderings.order_nameid', 'title': 'Order number'}, {'data': 'suppliers.0.name',
+        # 'title': 'Supplier'}, {'data': 'orderings.material', 'title': 'Material'}, {'data': 'projects.0.name',
+        # 'title': 'Project'}, {'data': 'users.0.username', 'title': 'Who ordered'}, {'data':
+        # 'orderings_order_state.name', 'title': 'Order state'}, {'data': 'orderings.date_ordered', 'title': 'Date
+        # ordered', 'type': 'date'}, {'data': 'orderings.date_invoice_planned', 'title': 'Date invoice planned',
+        # 'type': 'date'}, {'data': 'orderings.date_planned', 'title': 'Date planned', 'type': 'date'},
+        # {'data': 'orderings.date_delivered', 'title': 'Date delivered', 'type': 'date'},
+        # {'data': 'orderings.date_invoiced_done', 'title': 'Date invoiced', 'type': 'date'},
+        # {'data': 'orderings.invoice', 'title': 'Invoice amount', 'type': 'num-fmt'}, {'data': 'orderings.comment',
+        # 'title': 'Comment'}]
 
         for field in table_fields:
             assert 'data' in field, 'Key \'data\' not found in editor field: {0}'.format(field)
             assert 'title' in field, 'Key \'title\' not found in editor field: {0}'.format(field)
+
+        ref_table_count = {}
 
         for column in self.db_spec[self.resource_name]['columns']:
             if column['func'] == 'primarykey':
                 continue
             elif column['func'] == 'foreignkey':
                 # this is a reference to an other table
-                ref_text = self.customview_spec[self.resource_name][column['name']]['ref_text'][0]
-                expected_name = ref_text
+
+                ref_table_name, ref_col_name = self.customview_spec[self.resource_name][column['name']]['ref_text'][0].split('.')
+
+                if ref_table_name not in ref_table_count:
+                    ref_table_count[ref_table_name] = 0
+                expected_name = '{0}.{1}.{2}'.format(ref_table_name, ref_table_count[ref_table_name], ref_col_name)
+
             elif column['type'] == 'enum':
                 expected_name = '{0}_{1}.name'.format(self.resource_name, column['name'])
                 # Note: the underscore naming is a bit strange but it makes sense as it is some kind of a reference
@@ -311,14 +326,26 @@ class OrderingsData(ApiClient):
     def _compare_data_to_table_fields(self, data, table_fields):
         # now we check if every table column/field appears in the data field
         for field in table_fields:
+            field_parts = field['data'].split('.')
             table_name_parsed = field['data'].split('.')[0]
-            field_name_parsed = field['data'].split('.')[1]
+
+            if len(field_parts) == 2:
+                ref_count_parsed = -1
+                field_name_parsed = field_parts[1]
+            else:
+                ref_count_parsed = int(field_parts[1])
+                field_name_parsed = field_parts[2]
 
             for entry in data:
                 assert table_name_parsed in entry, 'Table name \'{0}\' should occur in the data field: {1}'.format(table_name_parsed, entry)
 
-                found_fields = [f for f in entry[table_name_parsed] if f == field_name_parsed]
-                assert len(found_fields) == 1, 'Column \'{0}\' not found in data: {1}'.format(field_name_parsed, table_name_parsed)
+                if ref_count_parsed < 0:
+                    found_fields = [f for f in entry[table_name_parsed] if f == field_name_parsed]
+                    assert len(found_fields) == 1, 'Column \'{0}\' not found in data: {1}'.format(field_name_parsed, table_name_parsed)
+
+                else:
+                    found_fields = [f for f in entry[table_name_parsed][ref_count_parsed] if f == field_name_parsed]
+                    assert len(found_fields) == 1, 'Column \'{0}\' not found in data: {1}'.format(field_name_parsed, table_name_parsed)
 
         # note: the content has already been checked; so only the occurrence of the fields must match
 

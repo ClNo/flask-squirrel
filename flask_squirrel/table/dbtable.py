@@ -9,7 +9,7 @@ from flask_squirrel.table import linked_resource
 from flask_squirrel.util.filter import Filter
 from flask_squirrel.util.view_spec_generator import ViewSpecGenerator
 from flask_squirrel.util import session_auth
-from flask_squirrel.table.dbutil import get_label_for_lang, get_primarykey_colname
+from flask_squirrel.table.dbutil import get_label_for_lang, get_primarykey_colname, SELF_REF_SUFFIX
 from flask_squirrel.util.session_auth import token_auth
 from sqlalchemy import text
 
@@ -22,6 +22,7 @@ log.addHandler(default_handler)
 
 class DbTable(Resource):
     PASSWORD_REPLACEMENT = '----------'
+
     # method_decorators = {'post': [own_authenticate]}
     # method_decorators = {'post': [auth.login_required], 'put': [auth.login_required]}
     method_decorators = {
@@ -50,7 +51,7 @@ class DbTable(Resource):
             # example:  'idemployee,abbr,firstname,lastname,state'
             self.sql_query_columns[table_nm] = ','.join([col['name'] for col in self.db_spec[table_nm]['columns']])
             self.sql_query_columns_full[table_nm] = ','.join(
-                [table_nm + '.' + col['name'] for col in self.db_spec[table_nm]['columns']])
+                ['`{0}`.`{1}`'.format(table_nm, col['name']) for col in self.db_spec[table_nm]['columns']])
 
         # parse predefined filters for the main table (used in self._get_rows_main_table())
         self.predefined_filters_main = None
@@ -256,7 +257,8 @@ class DbTable(Resource):
 
         rows_main_table = self._query_table(self.table_name, row_filter, predef_filter_arg, column_filters)
 
-        # query dependant/linkes tables - used only for the viewer
+        # query dependent/linked tables - used only for the viewer
+        queried_references = {}
         for row in rows_main_table:
             for col in self.columns:
                 if ('func' in col) and (col['func'] == 'foreignkey'):
@@ -265,11 +267,36 @@ class DbTable(Resource):
                     # now get the foreign key out of the original query
                     ref_val = row[self.table_name][col['name']]
 
-                    if ref_val is not None:
-                        self._query_joined_table_to_row(row, ref_table_name, '{0}.{1} = {2}'.format(ref_table_name, ref_id_name, ref_val))
+                    if ref_table_name not in queried_references:
+                        queried_references[ref_table_name] = {}
+
+                    if ref_id_name not in queried_references[ref_table_name]:
+                        queried_references[ref_table_name][ref_id_name] = {}
+
+                    if ref_val not in queried_references[ref_table_name][ref_id_name]:
+                        # this referenced ID / foreign to is not queried yet, do it
+                        # TODO: this referenced table query could be optimised by collecting all IDs first and query all
+                        #       together later...
+
+                        if (ref_val is not None) and (ref_val is not ''):
+                            ref_table_option_name, ref_dict = self._query_joined_table_to_row(ref_table_name, '`{0}`.`{1}` = {2}'.format(ref_table_name, ref_id_name, ref_val))
+                        else:
+                            # null value on joined / referenced table
+                            ref_table_option_name, ref_dict = self._add_null_reference(ref_table_name)
+
+                        if ref_table_option_name not in row:
+                            row[ref_table_option_name] = []
+                        row[ref_table_option_name].append(ref_dict)
+
+                        queried_references[ref_table_name][ref_id_name][ref_val] = (ref_table_option_name, ref_dict)
+
                     else:
-                        # null value on joined / referenced table
-                        self._add_null_reference(row, ref_table_name)
+                        # this referenced ID is already existing, do not query it again but use the stored data again
+                        ref_table_option_name, ref_dict = queried_references[ref_table_name][ref_id_name][ref_val]
+
+                        if ref_table_option_name not in row:
+                            row[ref_table_option_name] = []
+                        row[ref_table_option_name].append(ref_dict)
 
                 # replace it later! elif is_password:
                 #     row[self.table_name][col['name']] = self.PASSWORD_REPLACEMENT
@@ -449,39 +476,54 @@ class DbTable(Resource):
             rowcnt += 0
         return replaced_ref_rows
 
-    def _query_joined_table_to_row(self, to_row, table_name, sqlfilter):
+    def _query_joined_table_to_row(self, ref_table_name, sqlfilter):
         if sqlfilter is None:
             log.error('joined query cannot have an empty filter!')
             return
 
         conn = self.db_connect.connect()  # connect to database
-        query = conn.execute('SELECT {0} FROM `{1}` WHERE {2}'.format(self.sql_query_columns[table_name], table_name, sqlfilter))
+        query = conn.execute('SELECT {0} FROM `{1}` WHERE {2}'.format(self.sql_query_columns[ref_table_name], ref_table_name, sqlfilter))
         query_result = query.cursor.fetchall()
 
         if len(query_result) != 1:
             log.error('joined query gives not a ONE single row but {0}'.format(len(query_result)))
             return
         row = query_result[0]
-        to_row[table_name] = {}
-        col_name_list = self.sql_query_columns[table_name].split(',')
-        row_dict = self._format_row_for_json(table_name, col_name_list, row, False)
-        to_row.update(row_dict)
 
-    def _add_null_reference(self, row, ref_table_name):
+        ref_table_option_name = ref_table_name
+
+        if ref_table_name == self.table_name:
+            # This is a reference to itself! Example: reference from one employee to an other who is the chief of him.
+            # In this case a suffix must be added to the table name to refence it correctly!
+            ref_table_option_name = '{0}{1}'.format(ref_table_name, SELF_REF_SUFFIX)
+
+        new_ref = {}
+
+        col_name_list = self.sql_query_columns[ref_table_name].split(',')
+        ref_dict = self._format_row_for_json(ref_table_name, col_name_list, row, False)
+
+        return ref_table_option_name, ref_dict[ref_table_name]
+
+    def _add_null_reference(self, ref_table_name):
         if ref_table_name not in self.db_spec:
             log.error('Error table {0} is not in self.db_spec!'.format(ref_table_name))
             return
 
-        if ref_table_name in row:
-            log.error('Error referenced table {0} is already existing in row: {1}'.format(ref_table_name, row))
-            return
+        ref_table_option_name = ref_table_name
 
-        row[ref_table_name] = {}
+        if ref_table_name == self.table_name:
+            # This is a reference to itself! Example: reference from one employee to an other who is the chief of him.
+            # In this case a suffix must be added to the table name to refence it correctly!
+            ref_table_option_name = '{0}{1}'.format(ref_table_name, SELF_REF_SUFFIX)
+
+        new_ref = {}
 
         for col_spec in self.db_spec[ref_table_name]['columns']:
             col_name = col_spec['name']
             # clear every field
-            row[ref_table_name][col_name] = None
+            new_ref[col_name] = None
+
+        return ref_table_option_name, new_ref
 
     def _build_options_list(self, table_name, col_name, ref_table_name, ref_id_name, row_filter=None, current_filter=None):
         try:
@@ -500,12 +542,27 @@ class DbTable(Resource):
             field_label = []
             for ref_text in ref_text_list:
                 ref_table_spec, column_to_print = ref_text.split('.')
-                if ref_table_spec != ref_table_name:
-                    log.error('Building option list - reference table mismatch: {0} vs. {1} table {2}'.format(ref_table_spec, ref_table_name, table_name))
+                if (not ref_table_name) or (not column_to_print):
+                    log.error('Building option list for table {0}: reference format mismatch: {1}'.format(table_name, ref_text))
                     return []
 
-                field_label.append(row[ref_table_name][column_to_print])  # <----- THIS IS A FAILURE: [ref_table_name] <------
-            option_dict = {'label': ' '.join(field_label), 'value': row[ref_table_name][ref_id_name]}  # <----- THIS IS A FAILURE: [ref_table_name] <------
+                if ref_table_spec != ref_table_name:
+                    log.error('Building option list for table {0}: reference table mismatch: {1} vs. {2}'.format(table_name, ref_table_spec, ref_table_name))
+                    return []
+
+                if ref_table_name not in row:
+                    log.error('Building option list for table {0}: table {1} not found in row: {2}'.format(table_name, ref_table_name, row))
+                    return []
+
+                if column_to_print not in row[ref_table_name]:
+                    log.error('Building option list for table {0}: table {1} and column {2} not found in: {3}'.format(table_name, ref_table_name, column_to_print, row))
+                    return []
+
+                if row[ref_table_name][column_to_print]:
+                    # only append this string to the label string list if it is set
+                    field_label.append(row[ref_table_name][column_to_print])
+
+            option_dict = {'label': ' '.join(field_label), 'value': row[ref_table_name][ref_id_name]}
             option_list.append(option_dict)
 
         return option_list
