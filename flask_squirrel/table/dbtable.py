@@ -284,7 +284,7 @@ class DbTable(Resource):
                         # TODO: this referenced table query could be optimised by collecting all IDs first and query all
                         #       together later...
 
-                        if (ref_val is not None) and (ref_val is not ''):
+                        if (ref_val is not None) and (ref_val != ''):
                             ref_table_option_name, ref_dict = self._query_joined_table_to_row(ref_table_name, '`{0}`.`{1}` = {2}'.format(ref_table_name, ref_id_name, ref_val))
                         else:
                             # null value on joined / referenced table
