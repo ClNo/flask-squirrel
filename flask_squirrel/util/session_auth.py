@@ -94,8 +94,8 @@ class User:
             log.error('Error verifying the new password against the existing hash: {0}'.format(e))
         return False
 
-    def generate_auth_token(self, session_key, expiration=600):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+    def generate_auth_token(self, session_key, expiration_seconds):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration_seconds)
         return s.dumps({'id': self.user.iduser, 'session_key': session_key})
 
     def is_admin(self):
@@ -386,8 +386,9 @@ class LoginTokenApi(Resource):
         if current_app.user:
             session_dict = current_app.user.new_session()
             if 'key' in session_dict:
-                token = current_app.user.generate_auth_token(session_dict['key'], 600)
-                return jsonify({'token': token.decode('ascii'), 'duration': 600, 'is_admin': current_app.user.is_admin()})
+                expiration_time = current_app.config['login_expiration_seconds']
+                token = current_app.user.generate_auth_token(session_dict['key'], expiration_time)  # in seconds
+                return jsonify({'token': token.decode('ascii'), 'duration': expiration_time, 'is_admin': current_app.user.is_admin()})
             # else: error already logged (maybe session file not writable)
 
         return {'errmsg': 'not able to log in; check server\'s log'}, 401

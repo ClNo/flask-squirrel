@@ -104,10 +104,16 @@ class DbTable(Resource):
         if 'column_filter' in request_args:
             args['column_filter'] = {}
             for f in request_args['column_filter'].split('|'):
+                # wrap the request argument into '`' for protecting the SQL access
                 filter_column, filter_value = f.split(':')
-                if filter_value:
+                filter_wrapped = ''
+                for col_elem in filter_column.split('.'):
+                    if len(filter_wrapped) > 0:
+                        filter_wrapped += '.'
+                    filter_wrapped += '`{0}`'.format(col_elem)
+                if filter_column and filter_value:
                     # filter value must be non-empty which means it's not null
-                    args['column_filter'][filter_column] = filter_value
+                    args['column_filter'][filter_wrapped] = filter_value
 
         if 'get' in request_args:
             if request_args['get'] == 'data':
@@ -410,7 +416,7 @@ class DbTable(Resource):
                     try:
                         datetime.datetime.strptime(val, '%Y-%m-%d').date()
                     except Exception as e:
-                        log.error('Not an iso date string: \'{0}\': {1}'.format(val, e))
+                        log.error('Not an iso date string: \'{0}\': {1} (set to null)'.format(val, e))
                         val = None
                 else:
                     val = val.isoformat()
@@ -666,14 +672,14 @@ class DbTable(Resource):
         # and it depends whether the SQL server accepts it or not (flag 'NN' = not null).
 
         if action == 'create':
-            sql_cmd_pre = 'INSERT INTO {0}'.format(self.table_name)
+            sql_cmd_pre = 'INSERT INTO `{0}`'.format(self.table_name)
             sql_cmd_post = ''
 
         elif action == 'edit':
-            sql_cmd_pre = 'UPDATE {0}'.format(self.table_name)
+            sql_cmd_pre = 'UPDATE `{0}`'.format(self.table_name)
 
         elif action == 'remove':
-            sql_cmd_pre = 'DELETE FROM {0}'.format(self.table_name)
+            sql_cmd_pre = 'DELETE FROM `{0}`'.format(self.table_name)
 
         else:
             msg = 'Action type {0} unknown!'.format(action)
