@@ -1,0 +1,23 @@
+{
+  "listening_ip": "0.0.0.0",
+  "listening_port": 5000,
+  "api_path": "erp-api",
+  "version": "00.01.00",
+  "flask-debug": false,
+  "login_expiration_seconds": 86400,
+  "db_uri": "sqlite:///./erp-db.sqlite",
+  "db_type": "sqlite",
+  "db_spec": "rest-config/db_spec.json",
+  "customview_spec": "rest-config/db_customview_spec.json",
+  "translation_spec": "rest-config/translation.json",
+  "create_not_existing_dirs": true,
+  "upload_dir": "./upload_dir",
+  "file_url_path": "/erp-upload-files",
+  "archive_dir": "./erp_archive",
+  "archive_url_path": "/erp-archive-dir",
+  "session_dir": "./erp_sessions",
+  "default_admin_user": {"username": "admin", "password": "adm123", "authentication_level": 10, "firstname": "John", "lastname": "Test"},
+  "SECRET_KEY": "_5#y2LF4Q8z-\\xec]/",
+  "SESSION_COOKIE_SAMESITE": "Lax",
+  "SESSION_COOKIE_SECURE": true
+}

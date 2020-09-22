@@ -17,7 +17,11 @@ log.level = logging.DEBUG
 def convert_type(sql_type_str, unsigned_int):
     if (sql_type_str == 'INT') and not unsigned_int:
         return 'int'
+    if (sql_type_str == 'INTEGER') and not unsigned_int:
+        return 'int'
     if (sql_type_str == 'INT') and unsigned_int:
+        return 'uint'
+    if (sql_type_str == 'INTEGER') and unsigned_int:
         return 'uint'
     if sql_type_str == 'ENUM':
         return 'enum'
@@ -78,21 +82,36 @@ def create_col_def(colstr):
 def handle_primary_key(colstr, table_spec):
     p0 = colstr.find('(')
     p1 = colstr.find(')')
-    col_name = extract_identifier(colstr[p0+1:p1])
-    col_spec = [col for col in table_spec if col['name'] == col_name][0]
+    if (p0 != -1) and (p1 != -1):
+        # this format found: PRIMARY KEY (`idcompany`)
+        col_name = extract_identifier(colstr[p0+1:p1])
+    else:
+        # expecting this format: `idcompany` INTEGER PRIMARY KEY,
+        names = re.findall('[`\'"]([a-zA-Z0-9-_]*)[`\'"]', colstr)
+        col_name = names[-1]
+
+    col_spec_list = [col for col in table_spec if col['name'] == col_name]
+    if not col_spec_list:
+        # the column 'col_name' is not exisiting yet -> create it first
+        col_spec = create_col_def(colstr)
+        table_spec.append(col_spec)
+    else:
+        # it's existing -> use it
+        col_spec = col_spec_list[0]
     col_spec['func'] = 'primarykey'
 
 
 def handle_foreign_key(colstr, table_spec, foreign_key_name):
     # example:
     # - source: REFERENCES `company` (`idcompany`)
+    #           REFERENCES `erp-demo`.`company` (`idcompany`)
     # - found:  ['company', 'idcompany']
-    names = re.findall('[`\'"]([a-zA-Z0-9]*)[`\'"]', colstr)
-    col_name = names[1]
+    names = re.findall('[`\'"]([a-zA-Z0-9-_]*)[`\'"]', colstr)
+    col_name = names[-1]
     col_spec = [col for col in table_spec if col['name'] == foreign_key_name][0]
     col_spec['func'] = 'foreignkey'
 
-    ref_table_name = names[0]
+    ref_table_name = names[-2]
     col_spec['reference'] = '.'.join([ref_table_name, col_name])
     # goal: "reference": "company.idcompany"
 
@@ -148,12 +167,10 @@ def main():
         elif line.lstrip(' ') == '\n':
             continue
         elif line.startswith('CREATE TABLE '):
-            pos_list = [line.find(c) for c in '"\'`' if line.find(c) >= 0]
-            if len(pos_list) > 0:
-                p0 = pos_list[0] + 1
-                pos_list = [line.find(c, p0) for c in '"\'`' if line.find(c, p0) >= 0]
-                p1 = pos_list[0]
-                table_name = extract_identifier(line[p0:p1])
+            # 'CREATE TABLE IF NOT EXISTS `erp-demo`.`company` (...
+            names = re.findall('[`\'"]([a-zA-Z0-9-_]*)[`\'"]', line)
+            if len(names) > 0:
+                table_name = names[-1]  # expect the last item as the table name
             else:
                 p0 = line.find('.')
                 p1 = line.find('(')

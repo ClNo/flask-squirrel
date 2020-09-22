@@ -16,6 +16,8 @@ Welcome to Flask-Squirrel's documentation!
    user/translation
    user/authentication
    user/filter
+   
+   user/erp-demo-project
 
 .. toctree::
    :maxdepth: 2
