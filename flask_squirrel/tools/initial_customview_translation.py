@@ -1,8 +1,8 @@
 import argparse
 import json
-import pprint
 
-import jsbeautifier
+# import pprint
+# import jsbeautifier
 
 
 def generate_translation(db_spec, translation_file):

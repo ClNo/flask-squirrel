@@ -102,8 +102,8 @@ For step 1 and 2 you could do it this way:
 
    cd /home/dev/erp-backend
    mkdir db
-   cp ../erp-demo/db/erp-db-mysql-workbench.mwb db/
-   cp ../erp-demo/db/erp-db-mysql-workbench.sql db/
+   cp ../flask-squirrel/examples/erp-demo/db/erp-db-mysql-workbench.mwb db/
+   cp ../flask-squirrel/examples/erp-demo/db/erp-db-mysql-workbench.sql db/
 
 If you like to modify the database open it in the MySQL Workbench, edit the tables and export the
 SQL commands like this:
@@ -169,7 +169,7 @@ will give a selection list at the end.
 .. code-block:: shell
 
    mkdir rest-config
-   python ./flask-squirrel/flask_squirrel/tools/extract_dbspec.py db/erp-db-mysql-workbench.sql rest-config/db_spec.json
+   python ../flask-squirrel/flask_squirrel/tools/extract_dbspec.py db/erp-db-mysql-workbench.sql rest-config/db_spec.json
 
 
 Create Customview JSON File
@@ -192,7 +192,6 @@ Here, an initial file containing all the tables and fields will be created using
 
 .. code-block:: shell
 
-   pip install jsbeautifier
    python ../flask-squirrel/flask_squirrel/tools/initial_customview_translation.py rest-config/db_spec.json rest-config/db_customview_spec.json rest-config/translation.json
 
 The generated file :code:`db_customview_spec.json` no contains references to the foreign table and
@@ -358,28 +357,58 @@ Create the Config File
      "SESSION_COOKIE_SECURE": true
    }
 
+Place it in the main project directory:
+
+.. code-block:: shell
+
+   (venv) user@myhost:/home/dev/erp-backend$ ls -la
+   total 24
+   drwxrwxr-x 5 user user 4096 Sep 23 23:33 ./
+   drwxr-xr-x 6 user user 4096 Sep 23 22:26 ../
+   drwxrwxr-x 2 user user 4096 Sep 23 22:57 db/
+   -rw-rw-r-- 1 user user  853 Sep 23 23:33 erp-config.json
+   drwxrwxr-x 2 user user 4096 Sep 23 23:02 rest-config/
+   drwxrwxr-x 6 user user 4096 Sep 23 22:26 venv/
+
+
 Test Data
 ---------
 
 .. todo::
    
-   Not don yet!
+   Not done yet! In preparation - based on real-world DB; that's why it takes a little
+   time now to prepare it...
 
-sqlite3 erp-db.sqlite -init db/erp-db-test-data.sql
+.. code-block:: shell
+
+   sqlite3 erp-db.sqlite -init db/erp-db-test-data.sql
 
 
 Run the Backend
 ---------------
 
+.. warning::
+
+   You can only run the backend if you have an existing database :code:`erp-db.sqlite`.
+   So you can't skip any of the steps described above!
+
 As we currently don't have any business logic we can directly run the backend like this:
 
 .. code-block:: shell
 
-   # TODO - clarify call: python3 -m flask_squirrel.create_app('erp-config.json')
+   python -m flask_squirrel.startup.flask_main erp-config.json
 
 
-API Test
---------
+Testing the REST API
+--------------------
+
+.. todo::
+
+   Provide some good examples here as soon as the tast data is available...
+
+.. code-block:: shell
+
+   curl http://127.0.0.1:5000/erp-api/company
 
 
 Frontend Folder
@@ -392,26 +421,6 @@ a webserver itself.
 Here, the common JS/jQuery/datatables "Orderings"-frontend will be used as base and modified for the purpose
 of the ERP.
 
-Initial Test
-------------
-
-.. code-block:: shell
-
-   deactivate
-   cd /home/dev/erp-backend
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install --upgrade pip
-   pip install flask-squirrel
-   # insted of installing the main package, you could just link to your locally
-   # modified version: pip install -e ../path/to/flask-squirrel
-   python backend.py
-
-Testing the routes:
-
-.. code-block:: shell
-
-   curl http://127.0.0.1:5000/erp-api/company
 
 Copy the Frontend
 -----------------
