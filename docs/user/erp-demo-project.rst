@@ -104,6 +104,7 @@ For step 1 and 2 you could do it this way:
    mkdir db
    cp ../flask-squirrel/examples/erp-demo/db/erp-db-mysql-workbench.mwb db/
    cp ../flask-squirrel/examples/erp-demo/db/erp-db-mysql-workbench.sql db/
+   cp ../flask-squirrel/examples/erp-demo/db/erp-db-initial-data.sql db/
 
 If you like to modify the database open it in the MySQL Workbench, edit the tables and export the
 SQL commands like this:
@@ -374,14 +375,11 @@ Place it in the main project directory:
 Test Data
 ---------
 
-.. todo::
-   
-   Not done yet! In preparation - based on real-world DB; that's why it takes a little
-   time now to prepare it...
+This initial test data is based on real-world DB with scrambled texts:
 
 .. code-block:: shell
 
-   sqlite3 erp-db.sqlite -init db/erp-db-test-data.sql
+   sqlite3 erp-db.sqlite -init db/erp-db-initial-data.sql
 
 
 Run the Backend
