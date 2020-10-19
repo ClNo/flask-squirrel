@@ -327,8 +327,8 @@ Also note some details here:
    accessing every resource.
 
 
-Create the Config File
-----------------------
+Create the REST API Config File
+-------------------------------
 
 :code:`erp-config.json` describes everything you need to run the backend:
 
@@ -341,6 +341,8 @@ Create the Config File
      "version": "00.01.00",
      "flask-debug": false,
      "login_expiration_seconds": 86400,
+     "static_directory": "frontend",
+     "static_url": "erp",
      "db_uri": "sqlite:///./erp-db.sqlite",
      "db_type": "sqlite",
      "db_spec": "rest-config/db_spec.json",
@@ -358,22 +360,10 @@ Create the Config File
      "SESSION_COOKIE_SECURE": true
    }
 
-Place it in the main project directory:
+Place it in the main project directory (see an example structure below):
 
-.. code-block:: shell
-
-   (venv) user@myhost:/home/dev/erp-backend$ ls -la
-   total 24
-   drwxrwxr-x 5 user user 4096 Sep 23 23:33 ./
-   drwxr-xr-x 6 user user 4096 Sep 23 22:26 ../
-   drwxrwxr-x 2 user user 4096 Sep 23 22:57 db/
-   -rw-rw-r-- 1 user user  853 Sep 23 23:33 erp-config.json
-   drwxrwxr-x 2 user user 4096 Sep 23 23:02 rest-config/
-   drwxrwxr-x 6 user user 4096 Sep 23 22:26 venv/
-
-
-Test Data
----------
+Insert the Test Data
+--------------------
 
 This initial test data is based on real-world DB with scrambled texts:
 
@@ -390,6 +380,20 @@ Run the Backend
    You can only run the backend if you have an existing database :code:`erp-db.sqlite`.
    So you can't skip any of the steps described above!
 
+Check your project main directory which should look like this:
+
+.. code-block:: shell
+
+   (venv) user@myhost:/home/dev/erp-backend$ ls -l
+   drwxrwxr-x 2 user user       4096 Okt 17 23:27 db
+   -rw-rw-r-- 1 user user        853 Okt 17 23:54 erp-config.json
+   -rw-r--r-- 1 user user     724992 Okt 17 23:31 erp-db.sqlite
+   drwxrwxr-x 6 user user       4096 Okt 17 23:19 frontend
+   drwxrwxr-x 2 user user       4096 Okt 17 23:28 rest-config
+   drwxrwxr-x 2 user user       4096 Okt 17 23:37 upload_dir
+   drwxrwxr-x 6 user user       4096 Okt 17 23:19 venv
+
+
 As we currently don't have any business logic we can directly run the backend like this:
 
 .. code-block:: shell
@@ -400,21 +404,23 @@ As we currently don't have any business logic we can directly run the backend li
 Testing the REST API
 --------------------
 
-.. todo::
-
-   Provide some good examples here as soon as the tast data is available...
+Now you could test the API using :code:`curl` or any other tool for a REST API access.
 
 .. code-block:: shell
+   :caption: Show all stored companies
 
    curl http://127.0.0.1:5000/erp-api/company
+
+   # or for formatted JSON output:
+   curl http://127.0.0.1:5000/erp-api/company | jq
 
 
 Frontend Folder
 ---------------
 
 At least, create a folder called 'frontend' which the *erp-config.json* is referring to. Flask will serve this
-folder as static web application files to the browser. In a later project stage, this folder will be served by
-a webserver itself.
+folder as static web application files to the browser. In a later project stage, this folder should be served by
+a webserver instead of using Flask.
 
 Here, the common JS/jQuery/datatables "Orderings"-frontend will be used as base and modified for the purpose
 of the ERP.
@@ -437,10 +443,24 @@ In the JS world do the following follwing changes:
 - main.js, navbarItems: specify the tables you want to access
 - language.js: do the translations; at least the impartant ones
 
+
+Provide and Run the Frontend
+----------------------------
+
+If you have specified the keywords :code:`static_directory` and :code:`static_url` in the REST API config file :code:`erp-config.json`, the
+static frontend files will be provided by the Flask server:
+
+.. code-block::
+   :caption: URL to open in a browser
+
+   http://127.0.0.1:5000/erp/index.html
+
+And the browser will show a "default" frontend where the specified tables will be presented:
+
 .. image:: images/erp-frontend-initial.png
    :alt: ERP demo initial frontend
 
 .. note::
 
-   Conclusion: for more complex applications you should consider using a powerful JavaScript framework
+   Conclusion: for complex application like an ERP you should consider using a powerful JavaScript framework
    like Vue.js, React, Angular oder many others.

@@ -1,6 +1,6 @@
 import traceback
 
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_restful import Api
 
 from flask_squirrel import DbTable, LoginTokenApi
@@ -203,6 +203,12 @@ def create_app(config_filename=None, additional_config=None, hooks=None):
         log.info('Adding resource /{0}/upload to routes...'.format(API_PATH))
         from flask_squirrel.util import uploadroute
         app.register_blueprint(uploadroute.bp, url_prefix='/{0}'.format(API_PATH))
+
+    if ('static_directory' in app.config) and ('static_url' in app.config):
+        # provide web app (html/js/css)
+        frontend = Blueprint(app.config['static_url'], __name__, static_folder=app.config['static_directory'],
+                             static_url_path='/{0}'.format(app.config['static_url']))
+        app.register_blueprint(frontend)
 
     log.info('Adding resource /{0}/login-token to routes...'.format(API_PATH))
     # Set an initial login attribute for handling of verification in verify_password
