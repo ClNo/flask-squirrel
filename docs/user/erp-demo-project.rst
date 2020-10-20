@@ -341,7 +341,7 @@ Create the REST API Config File
      "version": "00.01.00",
      "flask-debug": false,
      "login_expiration_seconds": 86400,
-     "static_directory": "frontend",
+     "static_directory": "/home/dev/erp-backend/frontend",
      "static_url": "erp",
      "db_uri": "sqlite:///./erp-db.sqlite",
      "db_type": "sqlite",
@@ -360,7 +360,13 @@ Create the REST API Config File
      "SESSION_COOKIE_SECURE": true
    }
 
-Place it in the main project directory (see an example structure below):
+Place it in the main project directory (see an example structure below).
+
+.. note:
+
+   The keys :code:`static_directory` and :code:`static_url` are optional and are only used for providing the static
+   files of the frontend via Flask as file server. :code:`static_directory` seems to an absolute path otherwise it doesn't work.
+
 
 Insert the Test Data
 --------------------
