@@ -159,4 +159,4 @@ if __name__ == '__main__':
 
     create_initial_db(app)
 
-    app.run(host=app.config['listening_ip'], port=app.config['listening_port'], debug=True)
+    app.run(host=app.config['listening_ip'], port=app.config['listening_port'])

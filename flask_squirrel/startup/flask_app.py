@@ -205,10 +205,12 @@ def create_app(config_filename=None, additional_config=None, hooks=None):
         app.register_blueprint(uploadroute.bp, url_prefix='/{0}'.format(API_PATH))
 
     if ('static_directory' in app.config) and ('static_url' in app.config):
-        # provide web app (html/js/css)
+        # optionally provide web app (html/js/css)
+        log.info('Adding local static path "{0}" to routes at /{1}...'
+                 .format(app.config['static_directory'], app.config['static_url']))
         frontend = Blueprint(app.config['static_url'], __name__, static_folder=app.config['static_directory'],
                              static_url_path='/{0}'.format(app.config['static_url']))
-        app.register_blueprint(frontend)
+        app.register_blueprint(frontend, url_prefix='')  # no prefix here, take it directly from the config
 
     log.info('Adding resource /{0}/login-token to routes...'.format(API_PATH))
     # Set an initial login attribute for handling of verification in verify_password
