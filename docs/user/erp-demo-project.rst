@@ -362,7 +362,7 @@ Create the REST API Config File
 
 Place it in the main project directory (see an example structure below).
 
-.. note:
+.. note::
 
    The keys :code:`static_directory` and :code:`static_url` are optional and are only used for providing the static
    files of the frontend via Flask as file server. :code:`static_directory` seems to an absolute path otherwise it doesn't work.
